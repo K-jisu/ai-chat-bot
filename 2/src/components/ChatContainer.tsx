@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useEffect } from 'react';
 import { ChatState, ChatAction, Message, AIResponse, ChatContainerProps } from '@/types/chat';
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
 import MessageList from './MessageList';
@@ -87,13 +87,85 @@ const initialState: ChatState = {
   error: null,
 };
 
+// 로컬스토리지는 Date 객체를 저장할 수 없으니 문자열로 직렬화한다.
+type StoredMessage = Omit<Message, 'timestamp'> & { timestamp: string };
+
+// 나중에 API로 바꿀 때 키만 교체하면 되도록 고정 키로 관리한다.
+const CHAT_STORAGE_KEY = 'chat-history';
+
+// 저장된 대화를 불러오되, 실패 시 빈 배열을 반환한다.
+const loadChatHistory = (): Message[] => {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as StoredMessage[];
+    if (!Array.isArray(parsed)) return [];
+
+    // 문자열로 저장된 시간을 Date로 되돌려 UI 표시/정렬에 사용한다.
+    return parsed.map((message) => ({
+      ...message,
+      timestamp: new Date(message.timestamp),
+    }));
+  } catch (error) {
+    console.error('Failed to load chat history', error);
+    return [];
+  }
+};
+
+// 저장된 AI 메시지 수로 다음 턴 번호를 계산한다.
+const getNextTurnNumber = (messages: Message[]) =>
+  messages.filter((message) => message.type === 'ai').length + 1;
+
+// 새로고침 후에도 이어지도록 전체 메시지를 저장한다.
+const persistChatHistory = (messages: Message[]) => {
+  if (typeof window === 'undefined') return;
+
+  const serializedMessages: StoredMessage[] = messages.map((message) => ({
+    ...message,
+    timestamp: message.timestamp.toISOString(),
+  }));
+
+  try {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(serializedMessages));
+  } catch (error) {
+    console.error('Failed to persist chat history', error);
+  }
+};
+
 export default function ChatContainer({ initialMessages = [], onMessageSend }: ChatContainerProps) {
-  const [state, dispatch] = useReducer(chatReducer, {
-    ...initialState,
-    messages: initialMessages,
-  });
+  // 초기 메시지로 시작하되, 클라이언트에서는 저장된 대화가 있으면 우선한다.
+  const [state, dispatch] = useReducer(
+    chatReducer,
+    {
+      ...initialState,
+      messages: initialMessages,
+    },
+    (state) => {
+      // lazy initializer로 렌더링마다 localStorage를 읽지 않게 한다.
+      const storedMessages = loadChatHistory();
+      if (storedMessages.length === 0) return state;
+
+      return {
+        ...state,
+        messages: storedMessages,
+        currentTurn: getNextTurnNumber(storedMessages),
+      };
+    }
+  );
 
   const { keyboardHeight, isKeyboardVisible } = useKeyboardHeight();
+
+  useEffect(() => {
+    // AI/시스템 응답이 끝난 시점에만 저장한다.
+    if (state.isLoading) return;
+    const lastMessage = state.messages[state.messages.length - 1];
+    if (!lastMessage || (lastMessage.type !== 'ai' && lastMessage.type !== 'system')) return;
+
+    persistChatHistory(state.messages);
+  }, [state.isLoading, state.messages]);
 
   const handleMessageSend = useCallback(async (message: string) => {
     if (!message.trim() || state.isLoading) return;

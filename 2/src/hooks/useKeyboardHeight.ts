@@ -10,8 +10,8 @@ export function useKeyboardHeight() {
     if (typeof window === 'undefined') return;
 
     // Visual Viewport API 지원 여부 확인
-    if ('visualViewport' in window) {
-      const visualViewport = window.visualViewport!;
+    const visualViewport = window.visualViewport;
+    if (visualViewport) {
       
       const handleViewportChange = () => {
         const windowHeight = window.innerHeight;
