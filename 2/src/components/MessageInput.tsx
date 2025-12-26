@@ -3,7 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageInputProps } from '@/types/chat';
 
-export default function MessageInput({ onSend, disabled, placeholder = "Type your message..." }: MessageInputProps) {
+export default function MessageInput({
+  onSend,
+  disabled,
+  placeholder = 'Type your message...',
+}: MessageInputProps) {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -45,8 +49,8 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
   };
 
   return (
-    <div className="p-4">
-      <div className="flex items-end space-x-3">
+    <div className="px-5 pb-5 pt-3">
+      <div className="flex items-center space-x-3">
         {/* 텍스트 입력 */}
         <div className="flex-1 relative">
           <textarea
@@ -58,18 +62,18 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
             disabled={disabled}
             rows={1}
             className={`
-              w-full resize-none rounded-2xl border border-gray-300 px-4 py-3 pr-12
-              focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
-              disabled:bg-gray-100 disabled:cursor-not-allowed
-              text-sm leading-relaxed
+              w-full resize-none rounded-2xl bg-[#1a1c22]/90 px-4 py-3 pr-12
+              text-sm leading-relaxed text-neutral-100 placeholder:text-neutral-500
+              focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/10
+              disabled:bg-neutral-900/60 disabled:cursor-not-allowed
               max-h-[120px] overflow-y-auto
             `}
             style={{ minHeight: '48px' }}
           />
-          
+
           {/* 글자 수 표시(선택) */}
           {message.length > 100 && (
-            <div className="absolute bottom-1 right-12 text-xs text-gray-400">
+            <div className="absolute bottom-1 right-12 text-xs text-neutral-500">
               {message.length}
             </div>
           )}
@@ -84,14 +88,14 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
             transition-all duration-200 touch-manipulation
             ${
               disabled || !message.trim()
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 shadow-sm hover:shadow-md'
+                ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                : 'bg-gradient-to-br from-[#51556a] to-[#303444] text-white shadow-[0_10px_24px_rgba(0,0,0,0.45)] hover:from-[#5d6178] hover:to-[#3a3e52]'
             }
           `}
           style={{ minHeight: '44px', minWidth: '44px' }} // 접근성: 최소 터치 영역 확보
         >
           {disabled ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-neutral-300 border-t-transparent rounded-full animate-spin" />
           ) : (
             <svg
               className="w-5 h-5 text-white"

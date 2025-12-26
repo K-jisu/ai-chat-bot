@@ -1,5 +1,6 @@
 // AI 서비스의 JSON 응답 인터페이스
 export interface AIResponse {
+  type: 'character' | 'system';
   html: string; // 필수: 포맷이 포함된 HTML 콘텐츠
   image?: MediaContent; // 선택: 이미지 콘텐츠
   video?: MediaContent; // 선택: 비디오 콘텐츠
@@ -15,7 +16,7 @@ export interface MediaContent {
 // 채팅 메시지 인터페이스
 export interface Message {
   id: string;
-  type: 'user' | 'ai';
+  type: 'user' | 'ai' | 'system';
   content: string | AIResponse;
   timestamp: Date;
   turnNumber?: number;
@@ -30,9 +31,10 @@ export interface ChatState {
 }
 
 // 상태 관리를 위한 액션 타입
-export type ChatAction = 
+export type ChatAction =
   | { type: 'ADD_USER_MESSAGE'; payload: string }
   | { type: 'ADD_AI_MESSAGE'; payload: AIResponse }
+  | { type: 'ADD_SYSTEM_MESSAGE'; payload: AIResponse }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'RESET_CHAT' };
@@ -63,5 +65,4 @@ export interface MessageInputProps {
 
 export interface AIMessageProps {
   response: AIResponse;
-  turnNumber: number;
 }

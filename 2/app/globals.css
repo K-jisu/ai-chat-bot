@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0c10;
+  --foreground: #e7e7e9;
 }
 
 @theme inline {
@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "SUIT", "Pretendard Variable", "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
 }
 
 /* Mobile-first responsive design */
@@ -32,6 +32,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: radial-gradient(1100px circle at 50% -20%, #1b1c22 0%, #121318 45%, #0b0c10 100%);
 }
 
 .message-list {
@@ -43,8 +44,10 @@ body {
 .message-input-container {
   position: sticky;
   bottom: 0;
-  background: white;
-  border-top: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, rgba(11, 12, 16, 0) 0%, rgba(11, 12, 16, 0.85) 45%, rgba(11, 12, 16, 1) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding-bottom: env(safe-area-inset-bottom); /* iOS safe area */
 }
 
@@ -77,6 +80,10 @@ body {
 /* Prose styles for AI messages */
 .prose {
   max-width: none;
+}
+
+.chat-container .prose {
+  color: #e7e7e9;
 }
 
 .prose h1, .prose h2, .prose h3 {
@@ -125,10 +132,10 @@ body {
 }
 
 .prose a {
-  color: #3b82f6;
+  color: #9aa6ff;
   text-decoration: underline;
 }
 
 .prose a:hover {
-  color: #1d4ed8;
+  color: #b3bcff;
 }

@@ -38,6 +38,20 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         isLoading: false,
         error: null,
       };
+
+    case 'ADD_SYSTEM_MESSAGE':
+      const systemMessage: Message = {
+        id: `system-${Date.now()}`,
+        type: 'system',
+        content: action.payload,
+        timestamp: new Date(),
+      };
+      return {
+        ...state,
+        messages: [...state.messages, systemMessage],
+        isLoading: false,
+        error: null,
+      };
     
     case 'SET_LOADING':
       return {
@@ -92,7 +106,11 @@ export default function ChatContainer({ initialMessages = [], onMessageSend }: C
       const aiResponse = await onMessageSend(message.trim());
       
       // AI 응답 추가
-      dispatch({ type: 'ADD_AI_MESSAGE', payload: aiResponse });
+      if (aiResponse.type === 'system') {
+        dispatch({ type: 'ADD_SYSTEM_MESSAGE', payload: aiResponse });
+      } else {
+        dispatch({ type: 'ADD_AI_MESSAGE', payload: aiResponse });
+      }
     } catch (error) {
       dispatch({ 
         type: 'SET_ERROR', 
@@ -103,15 +121,15 @@ export default function ChatContainer({ initialMessages = [], onMessageSend }: C
 
   return (
     <div 
-      className="chat-container bg-gray-50 relative"
+      className="chat-container relative"
       style={{
         paddingBottom: isKeyboardVisible ? `${keyboardHeight}px` : '0px',
         transition: 'padding-bottom 0.2s ease-in-out'
       }}
     >
       {/* 헤더 */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-3">
-        <h1 className="text-lg font-semibold text-gray-900">AI Chat</h1>
+      <div className="flex-shrink-0 border-b border-white/5 px-5 py-4 backdrop-blur-sm">
+        <h1 className="text-lg font-semibold tracking-wide text-neutral-100">AI Chat</h1>
       </div>
 
       {/* 메시지 목록 */}

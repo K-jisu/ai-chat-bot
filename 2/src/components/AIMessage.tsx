@@ -3,7 +3,7 @@
 import { AIMessageProps, AIResponse } from '@/types/chat';
 import { sanitizeHTML, validateMediaURL } from '@/utils/sanitization';
 
-export default function AIMessage({ response, turnNumber }: AIMessageProps) {
+export default function AIMessage({ response }: AIMessageProps) {
   // 응답 구조 유효성 검사
   if (!response || typeof response.html !== 'string') {
     return (
@@ -21,10 +21,10 @@ export default function AIMessage({ response, turnNumber }: AIMessageProps) {
   const shouldShowVideo = !!response.video;
 
   return (
-    <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
+    <div className="bg-neutral-900/80 rounded-2xl px-4 py-3 shadow-[0_10px_26px_rgba(0,0,0,0.35)] border border-white/5 backdrop-blur">
       {/* HTML 콘텐츠 */}
-      <div 
-        className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
+      <div
+        className="prose prose-sm max-w-none text-neutral-100 leading-relaxed"
         dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       />
 
@@ -39,15 +39,6 @@ export default function AIMessage({ response, turnNumber }: AIMessageProps) {
       {shouldShowVideo && (
         <div className="mt-3">
           <VideoContent video={response.video!} />
-        </div>
-      )}
-
-      {/* 턴 표시 (디버깅용) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mt-2 text-xs text-gray-400">
-          Turn {turnNumber}
-          {shouldShowImage && ' (image)'}
-          {shouldShowVideo && ' (video)'}
         </div>
       )}
     </div>
@@ -75,14 +66,13 @@ function ImageContent({ image }: { image: NonNullable<AIResponse['image']> }) {
           const target = e.target as HTMLImageElement;
           target.style.display = 'none';
           const errorDiv = document.createElement('div');
-          errorDiv.className = 'bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600';
+          errorDiv.className =
+            'bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600';
           errorDiv.textContent = 'Failed to load image';
           target.parentNode?.appendChild(errorDiv);
         }}
       />
-      {image.alt && (
-        <p className="text-xs text-gray-500 mt-1">{image.alt}</p>
-      )}
+      {image.alt && <p className="text-xs text-gray-500 mt-1">{image.alt}</p>}
     </div>
   );
 }
@@ -108,7 +98,8 @@ function VideoContent({ video }: { video: NonNullable<AIResponse['video']> }) {
           const target = e.target as HTMLVideoElement;
           target.style.display = 'none';
           const errorDiv = document.createElement('div');
-          errorDiv.className = 'bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600';
+          errorDiv.className =
+            'bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600';
           errorDiv.textContent = 'Failed to load video';
           target.parentNode?.appendChild(errorDiv);
         }}
