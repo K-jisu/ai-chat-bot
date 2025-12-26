@@ -1,18 +1,18 @@
-// AI Response interface for JSON data from AI service
+// AI 서비스의 JSON 응답 인터페이스
 export interface AIResponse {
-  html: string; // Required: HTML content with formatting
-  image?: MediaContent; // Optional: Image for turn 4
-  video?: MediaContent; // Optional: Video for turn 6
+  html: string; // 필수: 포맷이 포함된 HTML 콘텐츠
+  image?: MediaContent; // 선택: 이미지 콘텐츠
+  video?: MediaContent; // 선택: 비디오 콘텐츠
 }
 
-// Media content interface for images and videos
+// 이미지/비디오용 미디어 콘텐츠 인터페이스
 export interface MediaContent {
   src: string;
-  alt?: string; // Required for images
-  title?: string; // Required for videos
+  alt?: string; // 이미지에 필요
+  title?: string; // 비디오에 필요
 }
 
-// Message interface for chat messages
+// 채팅 메시지 인터페이스
 export interface Message {
   id: string;
   type: 'user' | 'ai';
@@ -21,7 +21,7 @@ export interface Message {
   turnNumber?: number;
 }
 
-// Chat state interface for managing conversation state
+// 대화 상태 관리를 위한 인터페이스
 export interface ChatState {
   messages: Message[];
   currentTurn: number;
@@ -29,7 +29,7 @@ export interface ChatState {
   error: string | null;
 }
 
-// Chat action types for state management
+// 상태 관리를 위한 액션 타입
 export type ChatAction = 
   | { type: 'ADD_USER_MESSAGE'; payload: string }
   | { type: 'ADD_AI_MESSAGE'; payload: AIResponse }
@@ -37,14 +37,14 @@ export type ChatAction =
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'RESET_CHAT' };
 
-// Sanitization configuration interface
+// 정제 설정 인터페이스
 export interface SanitizationConfig {
   allowedTags: string[];
   allowedAttributes: Record<string, string[]>;
   allowedSchemes: string[];
 }
 
-// Component prop interfaces
+// 컴포넌트 props 인터페이스
 export interface ChatContainerProps {
   initialMessages?: Message[];
   onMessageSend: (message: string) => Promise<AIResponse>;

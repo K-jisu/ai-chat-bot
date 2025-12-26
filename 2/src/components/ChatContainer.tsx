@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useReducer, useCallback } from 'react';
 import { ChatState, ChatAction, Message, AIResponse, ChatContainerProps } from '@/types/chat';
@@ -6,7 +6,7 @@ import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 
-// Chat state reducer
+// 채팅 상태 리듀서
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
   switch (action.type) {
     case 'ADD_USER_MESSAGE':
@@ -65,7 +65,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
   }
 };
 
-// Initial chat state
+// 초기 채팅 상태
 const initialState: ChatState = {
   messages: [],
   currentTurn: 1,
@@ -84,14 +84,14 @@ export default function ChatContainer({ initialMessages = [], onMessageSend }: C
   const handleMessageSend = useCallback(async (message: string) => {
     if (!message.trim() || state.isLoading) return;
 
-    // Add user message
+    // 사용자 메시지 추가
     dispatch({ type: 'ADD_USER_MESSAGE', payload: message.trim() });
 
     try {
-      // Get AI response
+      // AI 응답 가져오기
       const aiResponse = await onMessageSend(message.trim());
       
-      // Add AI response
+      // AI 응답 추가
       dispatch({ type: 'ADD_AI_MESSAGE', payload: aiResponse });
     } catch (error) {
       dispatch({ 
@@ -103,30 +103,26 @@ export default function ChatContainer({ initialMessages = [], onMessageSend }: C
 
   return (
     <div 
-      className="chat-container bg-gray-50"
+      className="chat-container bg-gray-50 relative"
       style={{
         paddingBottom: isKeyboardVisible ? `${keyboardHeight}px` : '0px',
         transition: 'padding-bottom 0.2s ease-in-out'
       }}
     >
-      {/* Header */}
+      {/* 헤더 */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-900">AI Chat</h1>
       </div>
 
-      {/* Message List */}
+      {/* 메시지 목록 */}
       <div className="flex-1 overflow-hidden">
         <MessageList messages={state.messages} isLoading={state.isLoading} />
       </div>
 
-      {/* Error Display */}
-      {state.error && (
-        <div className="flex-shrink-0 bg-red-50 border-t border-red-200 px-4 py-2">
-          <p className="text-sm text-red-600">{state.error}</p>
-        </div>
-      )}
+      {/* 에러 표시 */}
+            {state.error && (         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center px-4 pb-24">           <div className="pointer-events-auto w-full max-w-md">             <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg">               <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-semibold text-red-700">                 !               </div>               <div className="flex-1">                 <p className="text-sm font-medium text-red-800">Something went wrong</p>                 <p className="text-sm text-red-700">{state.error}</p>               </div>               <button                 type="button"                 onClick={() => dispatch({ type: 'SET_ERROR', payload: null })}                 className="text-xs font-medium text-red-700 hover:text-red-900"               >                 Dismiss               </button>             </div>           </div>         </div>       )}
 
-      {/* Message Input */}
+      {/* 메시지 입력 */}
       <div className="message-input-container">
         <MessageInput
           onSend={handleMessageSend}
@@ -137,3 +133,4 @@ export default function ChatContainer({ initialMessages = [], onMessageSend }: C
     </div>
   );
 }
+

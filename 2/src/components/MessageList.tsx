@@ -7,7 +7,7 @@ import AIMessage from './AIMessage';
 export default function MessageList({ messages, isLoading }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // 새 메시지가 오면 자동으로 아래로 스크롤
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
@@ -15,7 +15,7 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {/* Empty state */}
+        {/* 비어 있는 상태 */}
         {messages.length === 0 && !isLoading && (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-500">
@@ -26,12 +26,12 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
           </div>
         )}
 
-        {/* Messages */}
+        {/* 메시지 목록 */}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
 
-        {/* Loading indicator */}
+        {/* 로딩 표시 */}
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200 max-w-xs">
@@ -47,7 +47,7 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
           </div>
         )}
 
-        {/* Scroll anchor */}
+        {/* 스크롤 앵커 */}
         <div ref={messagesEndRef} />
       </div>
     </div>

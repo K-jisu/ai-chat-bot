@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import { SanitizationConfig } from '@/types/chat';
 
-// Sanitization configuration following security requirements
+// 보안 요구사항에 맞춘 정제 설정
 export const SANITIZATION_CONFIG: SanitizationConfig = {
   allowedTags: [
     'h1', 'h2', 'h3', 'p', 'br', 'b', 'strong', 'i', 'em', 
@@ -13,7 +13,7 @@ export const SANITIZATION_CONFIG: SanitizationConfig = {
   allowedSchemes: ['http', 'https']
 };
 
-// Configure DOMPurify with our security settings
+// DOMPurify에 보안 설정 적용
 export const configureDOMPurify = () => {
   if (typeof window !== 'undefined') {
     DOMPurify.setConfig({
@@ -27,23 +27,23 @@ export const configureDOMPurify = () => {
   }
 };
 
-// Sanitize HTML content before rendering
+// 렌더링 전에 HTML 내용을 정제
 export const sanitizeHTML = (html: string): string => {
   if (typeof window === 'undefined') {
-    // Server-side: return as-is, will be sanitized on client
+    // 서버 사이드에서는 그대로 반환하고 클라이언트에서 정제
     return html;
   }
   
   configureDOMPurify();
   
-  // Sanitize and ensure links have proper security attributes
+  // 정제 후 링크에 보안 속성 부여
   const sanitized = DOMPurify.sanitize(html, {
     ADD_ATTR: ['target', 'rel'],
     FORBID_ATTR: ['style', 'onclick', 'onerror', 'onload', 'onmouseover'],
     FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed']
   });
   
-  // Post-process to add security attributes to links
+  // 후처리로 링크에 보안 속성 추가
   if (sanitized.includes('<a ')) {
     return sanitized.replace(
       /<a\s+([^>]*href="[^"]*"[^>]*)>/gi,
@@ -54,7 +54,7 @@ export const sanitizeHTML = (html: string): string => {
   return sanitized;
 };
 
-// Validate media URLs
+// 미디어 URL 유효성 검사
 export const validateMediaURL = (url: string): boolean => {
   try {
     const urlObj = new URL(url);

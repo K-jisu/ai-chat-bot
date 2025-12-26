@@ -7,7 +7,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea
+  // 텍스트 영역 자동 리사이즈
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -16,7 +16,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
     }
   }, [message]);
 
-  // Focus input on mount
+  // 마운트 시 입력창 포커스
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
@@ -26,7 +26,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
     if (trimmedMessage && !disabled) {
       onSend(trimmedMessage);
       setMessage('');
-      // Reset textarea height
+      // 텍스트 영역 높이 초기화
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
@@ -47,7 +47,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
   return (
     <div className="p-4">
       <div className="flex items-end space-x-3">
-        {/* Text Input */}
+        {/* 텍스트 입력 */}
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
@@ -67,7 +67,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
             style={{ minHeight: '48px' }}
           />
           
-          {/* Character count (optional) */}
+          {/* 글자 수 표시(선택) */}
           {message.length > 100 && (
             <div className="absolute bottom-1 right-12 text-xs text-gray-400">
               {message.length}
@@ -75,7 +75,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
           )}
         </div>
 
-        {/* Send Button */}
+        {/* 전송 버튼 */}
         <button
           onClick={handleSubmit}
           disabled={disabled || !message.trim()}
@@ -88,7 +88,7 @@ export default function MessageInput({ onSend, disabled, placeholder = "Type you
                 : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 shadow-sm hover:shadow-md'
             }
           `}
-          style={{ minHeight: '44px', minWidth: '44px' }} // Accessibility: minimum touch target
+          style={{ minHeight: '44px', minWidth: '44px' }} // 접근성: 최소 터치 영역 확보
         >
           {disabled ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

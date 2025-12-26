@@ -9,7 +9,7 @@ export function useKeyboardHeight() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Check if Visual Viewport API is supported
+    // Visual Viewport API 지원 여부 확인
     if ('visualViewport' in window) {
       const visualViewport = window.visualViewport!;
       
@@ -18,7 +18,7 @@ export function useKeyboardHeight() {
         const viewportHeight = visualViewport.height;
         const heightDifference = windowHeight - viewportHeight;
         
-        // Consider keyboard visible if height difference is significant
+        // 높이 차이가 크면 키보드가 열린 것으로 판단
         const keyboardVisible = heightDifference > 150;
         
         setKeyboardHeight(keyboardVisible ? heightDifference : 0);
@@ -33,7 +33,7 @@ export function useKeyboardHeight() {
         visualViewport.removeEventListener('scroll', handleViewportChange);
       };
     } else {
-      // Fallback for browsers without Visual Viewport API
+      // Visual Viewport API가 없는 브라우저용 대체 처리
       const handleResize = () => {
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.clientHeight;

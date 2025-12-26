@@ -4,7 +4,7 @@ import { AIMessageProps, AIResponse } from '@/types/chat';
 import { sanitizeHTML, validateMediaURL } from '@/utils/sanitization';
 
 export default function AIMessage({ response, turnNumber }: AIMessageProps) {
-  // Validate response structure
+  // 응답 구조 유효성 검사
   if (!response || typeof response.html !== 'string') {
     return (
       <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 shadow-sm">
@@ -13,41 +13,41 @@ export default function AIMessage({ response, turnNumber }: AIMessageProps) {
     );
   }
 
-  // Sanitize HTML content
+  // HTML 콘텐츠 정제
   const sanitizedHTML = sanitizeHTML(response.html);
 
-  // Check if this turn should display media
-  const shouldShowImage = turnNumber === 4 && response.image;
-  const shouldShowVideo = turnNumber === 6 && response.video;
+  // 응답에 미디어가 있으면 표시
+  const shouldShowImage = !!response.image;
+  const shouldShowVideo = !!response.video;
 
   return (
     <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
-      {/* HTML Content */}
+      {/* HTML 콘텐츠 */}
       <div 
         className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
         dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       />
 
-      {/* Image Content (Turn 4 only) */}
+      {/* 이미지 콘텐츠 */}
       {shouldShowImage && (
         <div className="mt-3">
           <ImageContent image={response.image!} />
         </div>
       )}
 
-      {/* Video Content (Turn 6 only) */}
+      {/* 비디오 콘텐츠 */}
       {shouldShowVideo && (
         <div className="mt-3">
           <VideoContent video={response.video!} />
         </div>
       )}
 
-      {/* Turn indicator (for debugging) */}
+      {/* 턴 표시 (디버깅용) */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 text-xs text-gray-400">
           Turn {turnNumber}
-          {shouldShowImage && ' (with image)'}
-          {shouldShowVideo && ' (with video)'}
+          {shouldShowImage && ' (image)'}
+          {shouldShowVideo && ' (video)'}
         </div>
       )}
     </div>
@@ -55,7 +55,7 @@ export default function AIMessage({ response, turnNumber }: AIMessageProps) {
 }
 
 function ImageContent({ image }: { image: NonNullable<AIResponse['image']> }) {
-  // Validate image URL
+  // 이미지 URL 유효성 검사
   if (!validateMediaURL(image.src)) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
@@ -88,7 +88,7 @@ function ImageContent({ image }: { image: NonNullable<AIResponse['image']> }) {
 }
 
 function VideoContent({ video }: { video: NonNullable<AIResponse['video']> }) {
-  // Validate video URL
+  // 비디오 URL 유효성 검사
   if (!validateMediaURL(video.src)) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
